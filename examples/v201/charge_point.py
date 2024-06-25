@@ -16,6 +16,8 @@ except ModuleNotFoundError:
 from ocpp.v201 import ChargePoint as cp
 from ocpp.v201 import call
 
+from ocpp.v16.datatypes import MeterValue, SampledValue
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -35,7 +37,65 @@ class ChargePoint(cp):
 
         if response.status == "Accepted":
             print("Connected to central system.")
+            await self.send_meter_values()
             await self.send_heartbeat(response.interval)
+
+    async def send_meter_values(self):
+
+        request = call.MeterValuesPayload(
+        connector_id=3,
+        meter_value=[
+            MeterValue(
+                timestamp="2017-08-17T07:08:06.186748+00:00",
+                sampled_value=[
+                    SampledValue(
+                        value="10",
+                        context="Sample.Periodic",
+                        format=None,
+                        measurand="Power.Active.Import",
+                        phase=None,
+                        location=None,
+                        unit="W",
+                    ),
+                    SampledValue(
+                        value="50000",
+                        context="Sample.Periodic",
+                        format=None,
+                        measurand="Power.Active.Import",
+                        phase="L1",
+                        location=None,
+                        unit="W",
+                    ),
+                ],
+            ),
+            MeterValue(
+                timestamp="2017-08-17T07:07:07.186748+00:00",
+                sampled_value=[
+                    SampledValue(
+                        value="10",
+                        context="Sample.Periodic",
+                        format=None,
+                        measurand="Power.Active.Import",
+                        phase=None,
+                        location=None,
+                        unit="W",
+                    ),
+                    SampledValue(
+                        value="50000",
+                        context="Sample.Periodic",
+                        format=None,
+                        measurand="Power.Active.Import",
+                        phase="L1",
+                        location=None,
+                        unit="W",
+                    ),
+                ],
+            ),
+        ],
+        transaction_id=5,
+    )
+        response = await self.call(request)
+        print("Test erfolgreich")
 
 
 async def main():

@@ -26,7 +26,7 @@ class ChargePoint(cp):
     @on("BootNotification")
     def on_boot_notification(self, charging_station, reason, **kwargs):
         return call_result.BootNotificationPayload(
-            current_time=datetime.utcnow().isoformat(), interval=10, status="Accepted"
+            current_time=datetime.utcnow().isoformat(), interval=120, status="Accepted"
         )
 
     @on("Heartbeat")
@@ -35,6 +35,11 @@ class ChargePoint(cp):
         return call_result.HeartbeatPayload(
             current_time=datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S") + "Z"
         )
+
+    @on("MeterValue")
+    def on_meter_value(self):
+        print("test")
+        return call_result.MeterValuesPayload()
 
 
 async def on_connect(websocket, path):
